@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:storeapp/places_json.dart';
+import '../Model/places_model.dart';
+
 
 class CartProvider extends ChangeNotifier{
 

@@ -3,10 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:storeapp/Data/placesData_json.dart';
 import 'package:storeapp/providers/cart_provider.dart';
 import 'app_styles.dart';
 import 'size_config.dart';
-import 'places_json.dart';
+// import 'places_json.dart';
 import 'trends_data.dart';
 import 'hashtag_data.dart';
 import 'package:storeapp/screen2/second_page.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   //final List<Widget> _pages = [const HomeScreen(),const NewsDetailScreen(),const ProfileScreen(),const ProfileScreen() ];
-  final List<Widget> _pages = [const HomeScreen(),const NewsDetailScreen()];
+  final List<Widget> _pages = [const HomeScreen(),const Scaffold()];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -228,112 +229,123 @@ class HomeScreen extends StatelessWidget {
             height: 304,
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: placesitems.length,
+              itemCount: PLACES1.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                return Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(
-                    right: 20,
-                  ),
-                  height: 304,
-                  width: 255,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(kBorderRadius),
-                    color: kWhite,
-                    boxShadow: [
-                      BoxShadow(
-                        color: kDarkBlue.withOpacity(0.051),
-                        offset: const Offset(0.0, 3.0),
-                        blurRadius: 24.0,
-                        spreadRadius: 0.0,
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 164,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(kBorderRadius),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              placesitems[index]['placeImage'].toString(),
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context, 
+                      MaterialPageRoute(
+                        builder: (context) => 
+                          NewsDetailScreen(places: PLACES1[index])
+                        )
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(
+                      right: 20,
+                    ),
+                    height: 304,
+                    width: 255,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(kBorderRadius),
+                      color: kWhite,
+                      boxShadow: [
+                        BoxShadow(
+                          color: kDarkBlue.withOpacity(0.051),
+                          offset: const Offset(0.0, 3.0),
+                          blurRadius: 24.0,
+                          spreadRadius: 0.0,
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 164,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                PLACES1[index].thumbnail,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      Flexible(
-                        child: Text(
-                         placesitems[index]['text'],
-                          style: kPoppinsBold.copyWith(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        const SizedBox(
+                          height: 18,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 19,
-                                backgroundColor: kLightBlue,
-                                 backgroundImage: NetworkImage(
-                                  'https://pbs.twimg.com/media/F9YZMWLXQAA7lcA?format=jpg&name=large'
-                                 ),
-                              ),
-                              const SizedBox(
-                                width: 12,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Kurt C. Sanchez',
-                                    style: kPoppinsSemibold.copyWith(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Sep 9, 2022',
-                                    style: kPoppinsRegular.copyWith(
-                                      color: kGrey,
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3,
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
+                        Flexible(
+                          child: Text(
+                           PLACES1[index].text,
+                            style: kPoppinsBold.copyWith(
+                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          Container(
-                            height: 38,
-                            width: 38,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(kBorderRadius),
-                              color: kLightWhite,
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const CircleAvatar(
+                                  radius: 19,
+                                  backgroundColor: kLightBlue,
+                                   backgroundImage: NetworkImage(
+                                    'https://pbs.twimg.com/media/F9YZMWLXQAA7lcA?format=jpg&name=large'
+                                   ),
+                                ),
+                                const SizedBox(
+                                  width: 12,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Kurt C. Sanchez',
+                                      style: kPoppinsSemibold.copyWith(
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal! * 3,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Sep 9, 2022',
+                                      style: kPoppinsRegular.copyWith(
+                                        color: kGrey,
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal! * 3,
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
                             ),
-                            child: SvgPicture.asset(
-                              'assets/images/share_icon.svg',
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
+                            Container(
+                              height: 38,
+                              width: 38,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(kBorderRadius),
+                                color: kLightWhite,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/images/share_icon.svg',
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

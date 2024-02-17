@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:storeapp/main.dart';
 import 'package:storeapp/app_styles.dart';
+import '../Model/places_model.dart';
 import 'carousel_images.dart';
 import 'package:storeapp/size_config.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class NewsDetailScreen extends StatelessWidget {
-  const NewsDetailScreen({Key? key}) : super(key: key);
+  final Places places;
+   const NewsDetailScreen({super.key, required this.places});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class NewsDetailScreen extends StatelessWidget {
               height: SizeConfig.blockSizeVertical! * 50,
               child: Stack(
                 children: [
-                  const FullScreenSlider(),
+                  FullScreenSlider(places: places,),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -97,7 +99,7 @@ class NewsDetailScreen extends StatelessWidget {
               ),
               transform: Matrix4.translationValues(0, -14, 0),
               child: Text(
-                'Unravel mysteries\nof Fontaine',
+                places.text,
                 style: kPoppinsBold.copyWith(
                   color: kDarkBlue,
                   fontSize: SizeConfig.blockSizeHorizontal! * 7,
@@ -170,7 +172,8 @@ class NewsDetailScreen extends StatelessWidget {
 
 
 class FullScreenSlider extends StatefulWidget {
-  const FullScreenSlider({Key? key}) : super(key: key);
+  final Places places;
+  const FullScreenSlider({super.key, required this.places});
 
   @override
   State<FullScreenSlider> createState() => _FullScreenSliderState();
@@ -197,7 +200,7 @@ class _FullScreenSliderState extends State<FullScreenSlider> {
             },
             initialPage: _current,
           ),
-          items: imageList
+          items: widget.places.imageLinks
               .map(
                 (item) => Center(
                   child: Image.network(
