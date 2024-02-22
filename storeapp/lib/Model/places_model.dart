@@ -6,12 +6,13 @@ class Places {
   final List<String> imageLinks;
   final String thumbnail;
 
-  Places({
-    required this.id,
-    required this.name,
-    required this.price,
-    required this.text,
-    required this.imageLinks,
-    required this.thumbnail
-  });
+  Places(
+      {required this.id,
+      required this.name,
+      required this.price,
+      required this.text,
+      required this.imageLinks,
+      required this.thumbnail});
 }
+
+
