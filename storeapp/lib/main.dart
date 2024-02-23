@@ -1,23 +1,21 @@
-//import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:storeapp/Data/placesData_json.dart';
+import 'package:storeapp/Model/places_model.dart';
+import 'package:storeapp/cart_page.dart';
 import 'package:storeapp/providers/cart_provider.dart';
 import 'app_styles.dart';
 import 'size_config.dart';
-import 'places_json.dart';
 import 'trends_data.dart';
 import 'hashtag_data.dart';
 import 'package:storeapp/screen2/second_page.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => CartProvider(),
-      child: const MyApp(),
-      )
-    );
+  runApp(ChangeNotifierProvider(
+    create: (context) => CartProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -30,7 +28,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
   //final List<Widget> _pages = [const HomeScreen(),const NewsDetailScreen(),const ProfileScreen(),const ProfileScreen() ];
-  final List<Widget> _pages = [const HomeScreen(),const NewsDetailScreen()];
+  final List<Widget> _pages = [
+    const HomeScreen(),
+    const CartPage(),
+    const Scaffold(),
+    const Scaffold()
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -43,8 +46,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-      backgroundColor: kLighterWhite,
-      body: _pages[_selectedIndex],
+        backgroundColor: kLighterWhite,
+        body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,
@@ -59,38 +62,53 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: _selectedIndex == 1
                   ? SvgPicture.asset('assets/images/bookmark_selected_icon.svg')
-                  : SvgPicture.asset('assets/images/bookmark_unselected_icon.svg'),
+                  : SvgPicture.asset(
+                      'assets/images/bookmark_unselected_icon.svg'),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: _selectedIndex == 2
-                  ? SvgPicture.asset('assets/images/notification_selected_icon.svg')
-                  : SvgPicture.asset('assets/images/notification_unselected_icon.svg'),
+                  ? SvgPicture.asset(
+                      'assets/images/notification_selected_icon.svg')
+                  : SvgPicture.asset(
+                      'assets/images/notification_unselected_icon.svg'),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: _selectedIndex == 3
                   ? SvgPicture.asset('assets/images/profile_selected_icon.svg')
-                  : SvgPicture.asset('assets/images/profile_unselected_icon.svg'),
+                  : SvgPicture.asset(
+                      'assets/images/profile_unselected_icon.svg'),
               label: '',
             ),
           ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
       ),
     );
   }
 }
 
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController searchController = TextEditingController();
+    
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-
+    List<Places> filteredPlaces = PLACES1
+        .where((place) => place.name
+            .toLowerCase()
+            .contains(searchController.text.toLowerCase()))
+        .map((e) => e)
+        .toList();
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.symmetric(
@@ -163,7 +181,12 @@ class HomeScreen extends StatelessWidget {
                       color: kBlue,
                       fontSize: SizeConfig.blockSizeHorizontal! * 3,
                     ),
-                    controller: TextEditingController(),
+                    controller: searchController,
+                    onChanged: (newValue) {
+                      setState(() {
+                        // Update any state variables here if needed
+                      });
+                    },
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 13,
@@ -228,112 +251,120 @@ class HomeScreen extends StatelessWidget {
             height: 304,
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: placesitems.length,
+              itemCount: filteredPlaces.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                return Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(
-                    right: 20,
-                  ),
-                  height: 304,
-                  width: 255,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(kBorderRadius),
-                    color: kWhite,
-                    boxShadow: [
-                      BoxShadow(
-                        color: kDarkBlue.withOpacity(0.051),
-                        offset: const Offset(0.0, 3.0),
-                        blurRadius: 24.0,
-                        spreadRadius: 0.0,
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 164,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(kBorderRadius),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              placesitems[index]['placeImage'].toString(),
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                NewsDetailScreen(places: filteredPlaces[index])));
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(
+                      right: 20,
+                    ),
+                    height: 304,
+                    width: 255,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(kBorderRadius),
+                      color: kWhite,
+                      boxShadow: [
+                        BoxShadow(
+                          color: kDarkBlue.withOpacity(0.051),
+                          offset: const Offset(0.0, 3.0),
+                          blurRadius: 24.0,
+                          spreadRadius: 0.0,
+                        )
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 164,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(kBorderRadius),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                filteredPlaces[index].thumbnail,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      Flexible(
-                        child: Text(
-                         placesitems[index]['text'],
-                          style: kPoppinsBold.copyWith(
-                            fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        const SizedBox(
+                          height: 18,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 19,
-                                backgroundColor: kLightBlue,
-                                 backgroundImage: NetworkImage(
-                                  'https://pbs.twimg.com/media/F9YZMWLXQAA7lcA?format=jpg&name=large'
-                                 ),
-                              ),
-                              const SizedBox(
-                                width: 12,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Kurt C. Sanchez',
-                                    style: kPoppinsSemibold.copyWith(
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Sep 9, 2022',
-                                    style: kPoppinsRegular.copyWith(
-                                      color: kGrey,
-                                      fontSize:
-                                          SizeConfig.blockSizeHorizontal! * 3,
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
+                        Flexible(
+                          child: Text(
+                            filteredPlaces[index].text,
+                            style: kPoppinsBold.copyWith(
+                              fontSize: SizeConfig.blockSizeHorizontal! * 3.5,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          Container(
-                            height: 38,
-                            width: 38,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.circular(kBorderRadius),
-                              color: kLightWhite,
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const CircleAvatar(
+                                  radius: 19,
+                                  backgroundColor: kLightBlue,
+                                  backgroundImage: NetworkImage(
+                                      'https://pbs.twimg.com/media/F9YZMWLXQAA7lcA?format=jpg&name=large'),
+                                ),
+                                const SizedBox(
+                                  width: 12,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Kurt C. Sanchez',
+                                      style: kPoppinsSemibold.copyWith(
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal! * 3,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Sep 9, 2022',
+                                      style: kPoppinsRegular.copyWith(
+                                        color: kGrey,
+                                        fontSize:
+                                            SizeConfig.blockSizeHorizontal! * 3,
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
                             ),
-                            child: SvgPicture.asset(
-                              'assets/images/share_icon.svg',
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
+                            Container(
+                              height: 38,
+                              width: 38,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.circular(kBorderRadius),
+                                color: kLightWhite,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/images/share_icon.svg',
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
